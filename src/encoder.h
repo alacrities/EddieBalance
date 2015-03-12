@@ -12,7 +12,7 @@
 //left encoder: 183 46
 //right encoder: 45 44
 
-static volatile double position[ 2 ];
+static volatile float position[ 2 ];
 mraa_gpio_context encoderx[ 4 ];
 
 int lastpins[ 4 ];
@@ -150,31 +150,31 @@ void ResetEncoders()
 	position[ 0 ] = position[ 1 ] = 0;
 }
 
-double GetEncoder(  )
+float GetEncoder(  )
 {
 	return (position[ 0 ]+position[ 1 ])/2;
 }
 
-void GetEncoders( double * temp )
+void GetEncoders( float * temp )
 {	
 	temp[0] = position[ 0 ];
 	temp[1] = position[ 1 ];
 }
 
-void GetEncoderChange( double * temp )
+void GetEncoderChange( float * temp )
 {	
 	temp[0] = position[ 0 ];
 	temp[1] = position[ 1 ];
 	position[ 0 ] = position[ 1 ] = 0;
 }
 
-void EncoderAddPos2( double distance1, double distance2 )
+void EncoderAddPos2( float distance1, float distance2 )
 {
 	position[0] += distance1;
 	position[1] += distance2;
 }
 
-void EncoderAddPos( double distance )
+void EncoderAddPos( float distance )
 {
 	position[0] += distance;
 	position[1] += distance;
