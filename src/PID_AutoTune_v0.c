@@ -39,8 +39,8 @@ void PID_ATune(float* Input, float* Output)
 	controlType = 1; //default to PID
 	noiseBand = 0.5;
 	running = 0;
-	oStep = 3;
-	SetLookbackSec(1);
+	oStep = 3; //30 Default provided
+	SetLookbackSec(3); //10 Default provided
 	lastTime = millis();
 	
 }

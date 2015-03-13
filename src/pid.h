@@ -10,15 +10,10 @@
 //Speed PID Configuration
 #define PIDS_P_GAIN 0.02f
 #define PIDS_I_GAIN 800.0f
-#define PIDS_D_GAIN 340.0f
+#define PIDS_D_GAIN 280.0f
 #define PIDS_EMA_SAMPLES 10.0f
 #define PIDS_I_LIMIT  450.0 //Ilimit is before process gain
 
- 
-//TEST Tune: 1.2166 0.0575 6.4374
-//Used P gain from already working Eddie and...
-//6.4374 / 1.2166 = x; x * P = 34.6D
-//0.575 / 1.2166 = x; x * P * 1000 = 311.458I
 //Pitch PID Configuration
 #define PIDP_P_GAIN 6.5f
 #define PIDP_I_GAIN 311.45f

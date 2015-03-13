@@ -391,7 +391,7 @@ initIdentity();
 		last_gy_ms = current_milliseconds();
 		
 		/*Complementary filters to smooth rough pitch and roll estimates*/
-		filteredPitch = 0.995 * ( filteredPitch + ( gy * gy_scale ) ) + ( 0.005 * i2cPitch );
+		filteredPitch = 0.998 * ( filteredPitch + ( gy * gy_scale ) ) + ( 0.002 * i2cPitch );
 		filteredRoll = 0.98 * ( filteredRoll + ( gx * gy_scale ) ) + ( 0.02 * i2cRoll );
 
 		/*Kalman filter for most accurate pitch estimates*/	
@@ -408,7 +408,7 @@ initIdentity();
 		} 
 		else if ( fabs( kalmanAngle ) < 10 && inFalloverState && fabs( filteredRoll ) < 20 )
 		{
-			if ( ++inSteadyState == 100 )
+			if ( ++inSteadyState == 300 )
 			{
 				inRunAwayState = 0;
 				inSteadyState = 0;
@@ -459,6 +459,7 @@ if(tuning)
 		printf( "Tune: %0.4f %0.4f %0.4f\r\n", pidP_P_GAIN, pidP_I_GAIN, pidP_D_GAIN );
 		//Tune: 1.8097 0.0785 10.4356
 		//Tune: 1.2166 0.0575 6.4374
+		//Tune: 1.2666 0.0347 11.5600
 	}
 	
 	pitchPIDoutput[1] = pitchPIDoutput[0]; //assign other pid controller value from autotuner's calculated value
