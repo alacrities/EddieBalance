@@ -30,6 +30,8 @@
 
 //#define DISABLE_MOTORS
 
+#define FILTERED_ANGLE_TRIM -8.0f //Trim to be applied to smoothed complementary filter estimate
+
 /* Auto Tune Vars */
 char ATuneModeRemember=2;
 //float input=80, output=50, setpoint=180;
@@ -395,7 +397,7 @@ initIdentity();
 		filteredRoll = 0.98 * ( filteredRoll + ( gx * gy_scale ) ) + ( 0.02 * i2cRoll );
 
 		/*Kalman filter for most accurate pitch estimates*/	
-		kalmanAngle = -getkalmanangle(filteredPitch, gy, gy_scale /*dt*/);
+		kalmanAngle = -getkalmanangle(filteredPitch+FILTERED_ANGLE_TRIM, gy, gy_scale /*dt*/);
 
 		/* Monitor angles to determine if Eddie has fallen too far... or if Eddie has been returned upright*/
 		if ( ( inRunAwayState || ( fabs( kalmanAngle ) > 50 || fabs( filteredRoll ) > 45 ) ) && !inFalloverState ) 
@@ -463,8 +465,7 @@ if(tuning)
 	}
 	
 	pitchPIDoutput[1] = pitchPIDoutput[0]; //assign other pid controller value from autotuner's calculated value
-	//speedPIDoutput[1] = -speedPIDoutput[0];
-	//speedPIDoutput[0] *= -1;
+
 }
 else 
 {
