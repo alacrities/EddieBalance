@@ -22,12 +22,12 @@ void __attribute__((optimize("Os"))) EncoderInterruptA( void * args )
 	
 	static int change;
 	change = 0;
-  currentpins[ 0 ] =  mraa_gpio_read( encoderx[ 0 ] );
-  currentpins[ 1 ] =  mraa_gpio_read( encoderx[ 1 ] );
+	currentpins[ 0 ] =  mraa_gpio_read( encoderx[ 0 ] );
+	currentpins[ 1 ] =  mraa_gpio_read( encoderx[ 1 ] );
   
-  if( currentpins[ 0 ] != lastpins[ 0 ] )
-  {
-  	if( currentpins[ 0 ] > lastpins[ 0 ] )
+	if( currentpins[ 0 ] != lastpins[ 0 ] )
+	{
+		if( currentpins[ 0 ] > lastpins[ 0 ] )
 		{
 			if( currentpins[ 1 ]  )
 			{
@@ -51,7 +51,7 @@ void __attribute__((optimize("Os"))) EncoderInterruptA( void * args )
 		}
 	}
 	else if( currentpins[ 1 ] != lastpins[ 1 ] )
-  {
+	{
   	if( currentpins[ 1 ] > lastpins[ 1 ] )
 		{
 			if( currentpins[ 0 ] )
@@ -88,12 +88,12 @@ void __attribute__((optimize("Os"))) EncoderInterruptB( void * args )
 	
 	static int change;
 	change = 0;
-  currentpins[ 0 ] =  mraa_gpio_read( encoderx[ 2 ] );
-  currentpins[ 1 ] =  mraa_gpio_read( encoderx[ 3 ] );
+	currentpins[ 0 ] =  mraa_gpio_read( encoderx[ 2 ] );
+	currentpins[ 1 ] =  mraa_gpio_read( encoderx[ 3 ] );
   
-  if( currentpins[ 0 ] != lastpins[ 2 ] )
-  {
-  	if( currentpins[ 0 ] > lastpins[ 2 ] )
+	if( currentpins[ 0 ] != lastpins[ 2 ] )
+	{
+		if( currentpins[ 0 ] > lastpins[ 2 ] )
 		{
 			if( currentpins[ 1 ]  )
 			{
@@ -117,8 +117,8 @@ void __attribute__((optimize("Os"))) EncoderInterruptB( void * args )
 		}
 	}
 	else if( currentpins[ 1 ] != lastpins[ 3 ] )
-  {
-  	if( currentpins[ 1 ] > lastpins[ 3 ] )
+	{
+		if( currentpins[ 1 ] > lastpins[ 3 ] )
 		{
 			if( currentpins[ 0 ] )
 			{
@@ -204,10 +204,10 @@ void initEncoders( int a, int b, int c, int d )
 
 void CloseEncoder()
 {
-  mraa_gpio_close( encoderx[ 0 ] );	  
-  mraa_gpio_close( encoderx[ 1 ] );
-  mraa_gpio_close( encoderx[ 2 ] );	  
-  mraa_gpio_close( encoderx[ 3 ] );		  
+	mraa_gpio_close( encoderx[ 0 ] );	  
+	mraa_gpio_close( encoderx[ 1 ] );
+	mraa_gpio_close( encoderx[ 2 ] );	  
+	mraa_gpio_close( encoderx[ 3 ] );		  
 }
 
 #endif
