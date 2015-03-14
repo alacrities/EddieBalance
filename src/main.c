@@ -33,17 +33,9 @@
 #define FILTERED_ANGLE_TRIM -8.0f //Trim to be applied to smoothed complementary filter estimate
 
 /* Auto Tune Vars */
-char ATuneModeRemember=2;
-//float input=80, output=50, setpoint=180;
-//float kp=2,ki=0.5,kd=2;
-
-float kpmodel=1.5, taup=100, theta[50];
-//float outputStart=5;
-float aTuneStep=50, aTuneNoise=1, aTuneStartValue=100;
-unsigned int aTuneLookBack=20;
-
+float aTuneStep=65, aTuneNoise=3.0;
+unsigned int aTuneLookBack=10;
 int tuning = 0;
-unsigned long  modelTime, serialTime;
 /*Auto Tune Vars */
 void changeAutoTune()
 {
@@ -51,7 +43,6 @@ void changeAutoTune()
 	{
 		printf( "Auto Tune Starting...\r\n" );
 		//Set the output to the desired starting frequency.
-		//output=aTuneStartValue;
 		SetNoiseBand(aTuneNoise);
 		SetOutputStep(aTuneStep);
 		SetLookbackSec((int)aTuneLookBack);
@@ -147,7 +138,7 @@ void UDP_Control_Handler( char * p_udpin )
 	
 	char response[128] = {0};
 	
-	if ( !memcmp( p_udpin, "DISCOVER", 8 ) )
+	if ( memcmp( p_udpin, "DISCOVER", 8 ) == 0 )
 	{
 		sprintf( response, "DISCOVER: %s", thisEddieName );
 	}
@@ -156,12 +147,12 @@ void UDP_Control_Handler( char * p_udpin )
 		setName( &p_udpin[7] );
 		sprintf( response, "SETNAME: %s", thisEddieName );
 	}
-	else if ( !memcmp( p_udpin, "BIND", 4 ) )
+	else if ( memcmp( p_udpin, "BIND", 4 ) == 0 )
 	{
 		setCommandBindAddress();
 		sprintf( response, "BIND: OK" );
 	}
-	else if ( !memcmp( p_udpin, "ATUNE", 5 ) )
+	else if ( memcmp( p_udpin, "ATUNE", 5 ) == 0 )
 	{
 		changeAutoTune();
 	}
@@ -192,12 +183,12 @@ void UDP_Control_Handler( char * p_udpin )
 void UDP_Command_Handler( char * p_udpin )
 {
 	/* DRIVE commands */
-	if( !memcmp( p_udpin, "DRIVE", 5 ) )
+	if( memcmp( p_udpin, "DRIVE", 5 ) == 0 )
 	{
 		driveTrim = atof( &p_udpin[5] );
 	}
 	/* TURN commands */
-	else if( !memcmp( p_udpin, "TURN", 4 ) )
+	else if( memcmp( p_udpin, "TURN", 4 ) == 0 )
 	{
 		turnTrim = atof( &p_udpin[4] );
 	}
@@ -462,6 +453,7 @@ if(tuning)
 		//Tune: 1.8097 0.0785 10.4356
 		//Tune: 1.2166 0.0575 6.4374
 		//Tune: 1.2666 0.0347 11.5600
+		//Tune: 1.7669 0.1238 6.3047
 	}
 	
 	pitchPIDoutput[1] = pitchPIDoutput[0]; //assign other pid controller value from autotuner's calculated value

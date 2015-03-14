@@ -16,11 +16,12 @@ static volatile float position[ 2 ];
 mraa_gpio_context encoderx[ 4 ];
 
 int lastpins[ 4 ];
-void EncoderInterruptA( void * args ) 
+void __attribute__((optimize("Os"))) EncoderInterruptA( void * args ) 
 {	
-	int currentpins[ 2 ];
+	static int currentpins[ 2 ];
 	
-	int change=0;
+	static int change;
+	change = 0;
   currentpins[ 0 ] =  mraa_gpio_read( encoderx[ 0 ] );
   currentpins[ 1 ] =  mraa_gpio_read( encoderx[ 1 ] );
   
@@ -81,11 +82,12 @@ void EncoderInterruptA( void * args )
 	lastpins[ 1 ] = currentpins[ 1 ];	
 }
 
-void EncoderInterruptB( void * args ) 
+void __attribute__((optimize("Os"))) EncoderInterruptB( void * args ) 
 {		
-	int currentpins[ 2 ];
+	static int currentpins[ 2 ];
 	
-	int change=0;
+	static int change;
+	change = 0;
   currentpins[ 0 ] =  mraa_gpio_read( encoderx[ 2 ] );
   currentpins[ 1 ] =  mraa_gpio_read( encoderx[ 3 ] );
   

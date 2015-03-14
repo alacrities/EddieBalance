@@ -39,8 +39,8 @@ void PID_ATune(float* Input, float* Output)
 	controlType = 1; //default to PID
 	noiseBand = 0.5;
 	running = 0;
-	oStep = 3; //30 Default provided
-	SetLookbackSec(3); //10 Default provided
+	oStep = 30;
+	SetLookbackSec(10);
 	lastTime = millis();
 	
 }
@@ -54,7 +54,6 @@ void Cancel()
  
 int Runtime()
 {
-//printf("Runtime() called\r\n");
 	justevaled=0;
 	if(peakCount>9 && running)
 	{
@@ -62,18 +61,20 @@ int Runtime()
 		FinishUp();
 		return 1;
 	}
-//printf("Runtime() millis\r\n");
+
 	unsigned long now = millis();
-	
+
 	if((now-lastTime)<sampleTime) return 0;
+	
 	lastTime = now;
-//printf("Runtime() setting refVal\r\n");
+
 	float refVal = *input;
-//printf("Runtime() set refVal\r\n" );
+
 	justevaled=1;
+	
 	if(!running)
 	{ //initialize working variables the first time around
-printf("Runtime() detected first time\r\n");
+		printf("Runtime() detected first time\r\n");
 		peakType = 0;
 		peakCount=0;
 		justchanged=0;
@@ -89,76 +90,73 @@ printf("Runtime() detected first time\r\n");
 		if(refVal>absMax)absMax=refVal;
 		if(refVal<absMin)absMin=refVal;
 	}
-//printf("Runtime() 1\r\n");	
+
 	//oscillate the output base on the input's relation to the setpoint
-	
+
 	if(refVal>setpoint+noiseBand) *output = outputStart-oStep;
 	else if (refVal<setpoint-noiseBand) *output = outputStart+oStep;
-	
-//printf("Runtime() 2\r\n");	
-  //bool isMax=1, isMin=1;
-  isMax=1;isMin=1;
-  //id peaks
-  int i=0;
-  for(i=nLookBack-1;i>=0;i--)
-  {
-    float val = lastInputs[i];
-    if(isMax) isMax = refVal>val;
-    if(isMin) isMin = refVal<val;
-    lastInputs[i+1] = lastInputs[i];
-  }
-  lastInputs[0] = refVal;  
-  if(nLookBack<9)
-  {  //we don't want to trust the maxes or mins until the inputs array has been filled
-	return 0;
+
+	isMax=1;isMin=1;
+	//id peaks
+	int i=0;
+	for(i=nLookBack-1;i>=0;i--)
+	{
+		float val = lastInputs[i];
+		if(isMax) isMax = refVal>val;
+		if(isMin) isMin = refVal<val;
+		lastInputs[i+1] = lastInputs[i];
 	}
-  
-  if(isMax)
-  {
-    if(peakType==0)peakType=1;
-    if(peakType==-1)
-    {
-      peakType = 1;
-      justchanged=1;
-      peak2 = peak1;
-    }
-    peak1 = now;
-    peaks[peakCount] = refVal;
-   
-  }
-  else if(isMin)
-  {
-    if(peakType==0)peakType=-1;
-    if(peakType==1)
-    {
-      peakType=-1;
-      peakCount++;
-      justchanged=1;
-    }
-    
-    if(peakCount<10)peaks[peakCount] = refVal;
-  }
-//printf("Runtime() 3\r\n");  
-  if(justchanged && peakCount>2)
-  { //we've transitioned.  check if we can autotune based on the last peaks
-    float avgSeparation = (abs(peaks[peakCount-1]-peaks[peakCount-2])+abs(peaks[peakCount-2]-peaks[peakCount-3]))/2;
-    if( avgSeparation < 0.05*(absMax-absMin))
-    {
-		FinishUp();
-      running = 0;
-	  return 1;
-	 
-    }
-  }
-   justchanged=0;
+	lastInputs[0] = refVal;  
+	if(nLookBack<9)
+	{  //we don't want to trust the maxes or mins until the inputs array has been filled
+		return 0;
+	}
+
+	if(isMax)
+	{
+		if( peakType == 0 ) peakType = 1;
+		if( peakType == -1 )
+		{
+			peakType = 1;
+			justchanged = 1;
+			peak2 = peak1;
+		}
+		peak1 = now;
+		peaks[peakCount] = refVal;
+
+	}
+	else if(isMin)
+	{
+		if(peakType==0)peakType=-1;
+		if(peakType==1)
+		{
+			peakType=-1;
+			peakCount++;
+			justchanged=1;
+		}
+
+		if(peakCount<10)peaks[peakCount] = refVal;
+	}
+
+	if(justchanged && peakCount>2)
+	{ //we've transitioned.  check if we can autotune based on the last peaks
+		float avgSeparation = (abs(peaks[peakCount-1]-peaks[peakCount-2])+abs(peaks[peakCount-2]-peaks[peakCount-3]))/2;
+		if( avgSeparation < 0.05*(absMax-absMin))
+		{
+			FinishUp();
+			running = 0;
+			return 1;
+		}
+	}
+	justchanged=0;
 	return 0;
 }
 void FinishUp()
 {
-	  *output = outputStart;
-      //we can generate tuning parameters!
-      Ku = 4*(2*oStep)/((absMax-absMin)*3.14159);
-      Pu = (float)(peak1-peak2) / 1000;
+	*output = outputStart;
+	//we can generate tuning parameters!
+	Ku = 4*(2*oStep)/((absMax-absMin)*3.14159);
+	Pu = (float)(peak1-peak2) / 1000;
 }
 
 float GetKp()
