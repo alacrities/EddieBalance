@@ -30,7 +30,7 @@
 
 //#define DISABLE_MOTORS
 
-#define FILTERED_ANGLE_TRIM -8.0f //Trim to be applied to smoothed complementary filter estimate
+#define FILTERED_ANGLE_TRIM -6.0f //Trim to be applied to smoothed complementary filter estimate
 
 /* Auto Tune Vars */
 float aTuneStep=65, aTuneNoise=3.0;
@@ -383,6 +383,12 @@ initIdentity();
 	
 		last_gy_ms = current_milliseconds();
 		
+if ( gy_scale > 0.1 )
+{
+printf( "gy_scale: %0.4f\r\n", gy_scale );
+continue;
+}
+			
 		/*Complementary filters to smooth rough pitch and roll estimates*/
 		filteredPitch = 0.998 * ( filteredPitch + ( gy * gy_scale ) ) + ( 0.002 * i2cPitch );
 		filteredRoll = 0.98 * ( filteredRoll + ( gx * gy_scale ) ) + ( 0.02 * i2cRoll );
@@ -401,7 +407,7 @@ initIdentity();
 		} 
 		else if ( fabs( kalmanAngle ) < 10 && inFalloverState && fabs( filteredRoll ) < 20 )
 		{
-			if ( ++inSteadyState == 300 )
+			if ( ++inSteadyState == 200 )
 			{
 				inRunAwayState = 0;
 				inSteadyState = 0;

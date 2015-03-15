@@ -8,17 +8,17 @@
 #define PID_H_
 
 //Speed PID Configuration
-#define PIDS_P_GAIN 0.02f
-#define PIDS_I_GAIN 800.0f
-#define PIDS_D_GAIN 280.0f
-#define PIDS_EMA_SAMPLES 10.0f
-#define PIDS_I_LIMIT  450.0 //Ilimit is before process gain
+#define PIDS_P_GAIN 0.019f
+#define PIDS_I_GAIN 0.0f
+#define PIDS_D_GAIN 190.0f
+#define PIDS_EMA_SAMPLES 5.0f
+#define PIDS_I_LIMIT  250.0 //Ilimit is before process gain
 
 //Pitch PID Configuration
-#define PIDP_P_GAIN 6.5f
-#define PIDP_I_GAIN 311.45f
-#define PIDP_D_GAIN 34.6f
-#define PIDP_EMA_SAMPLES 2.0f
+#define PIDP_P_GAIN 6.0f
+#define PIDP_I_GAIN 300.0f
+#define PIDP_D_GAIN 27.0f
+#define PIDP_EMA_SAMPLES 1.5f
 #define PIDP_I_LIMIT  10.0 //Ilimit is before process gain
 
 typedef struct
