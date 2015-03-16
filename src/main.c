@@ -26,36 +26,9 @@
 #include "pid.h"
 #include "udp.h"
 
-#include "PID_AutoTune_v0.h"
-
 //#define DISABLE_MOTORS
 
 #define FILTERED_ANGLE_TRIM -6.0f //Trim to be applied to smoothed complementary filter estimate
-
-/* Auto Tune Vars */
-float aTuneStep=65, aTuneNoise=3.0;
-unsigned int aTuneLookBack=10;
-int tuning = 0;
-/*Auto Tune Vars */
-void changeAutoTune()
-{
-	if(!tuning)
-	{
-		printf( "Auto Tune Starting...\r\n" );
-		//Set the output to the desired starting frequency.
-		SetNoiseBand(aTuneNoise);
-		SetOutputStep(aTuneStep);
-		SetLookbackSec((int)aTuneLookBack);
-		tuning = 1;
-	}
-	else
-	{ //cancel autotune
-		printf( "Auto Tune STOPPING...\r\n" );
-		Cancel();
-		tuning = 0;
-	}
-}
-
 
 static double last_gy_ms;
 static double last_PID_ms;
@@ -151,10 +124,6 @@ void UDP_Control_Handler( char * p_udpin )
 	{
 		setCommandBindAddress();
 		sprintf( response, "BIND: OK" );
-	}
-	else if ( memcmp( p_udpin, "ATUNE", 5 ) == 0 )
-	{
-		changeAutoTune();
 	}
 	
 	UDPCtrlSend( response );
@@ -311,7 +280,7 @@ int main(int argc, char **argv)
 	
 	print("Eddie starting...\r\n");
 
-initIdentity();
+	initIdentity();
 	
 	float EncoderPos[2] = {0};
 	
@@ -359,11 +328,7 @@ initIdentity();
 	
 	double gy_scale = 0.01;
 	last_PID_ms = last_gy_ms = current_milliseconds();
-	
-	/* Init Auto Tuner (input,output) */
-	PID_ATune( &speedPIDoutput[0], &pitchPIDoutput[0] );
-	//PID_ATune( &EncoderPos[0], &speedPIDoutput[0] );
-	
+
 	while(Running)
 	{
 		GetEncoders( EncoderPos );
@@ -385,7 +350,7 @@ initIdentity();
 		
 if ( gy_scale > 0.1 )
 {
-printf( "gy_scale: %0.4f\r\n", gy_scale );
+printf( "Eddie Warning: gy_scale: %0.4f\r\n", gy_scale );
 continue;
 }
 			
@@ -443,33 +408,9 @@ continue;
 			speedPIDoutput[0] = PIDUpdate( 0, EncoderPos[0], timenow - last_PID_ms, &speedPID[0] );//Wheel Speed PIDs
 			speedPIDoutput[1] = PIDUpdate( 0, EncoderPos[1], timenow - last_PID_ms, &speedPID[1] );//Wheel Speed PIDs
 
-if(tuning)
-{
-	char val = (Runtime());
-	if (val!=0)
-	{
-		tuning = 0;
-	}
-	if(!tuning) //we're done, set the tuning parameters
-	{ 
-		pidP_P_GAIN = GetKp();
-		pidP_I_GAIN = GetKi();
-		pidP_D_GAIN = GetKd();
-		printf( "Tune: %0.4f %0.4f %0.4f\r\n", pidP_P_GAIN, pidP_I_GAIN, pidP_D_GAIN );
-		//Tune: 1.8097 0.0785 10.4356
-		//Tune: 1.2166 0.0575 6.4374
-		//Tune: 1.2666 0.0347 11.5600
-		//Tune: 1.7669 0.1238 6.3047
-	}
-	
-	pitchPIDoutput[1] = pitchPIDoutput[0]; //assign other pid controller value from autotuner's calculated value
-
-}
-else 
-{
 			pitchPIDoutput[0] = PIDUpdate( speedPIDoutput[0], kalmanAngle, timenow - last_PID_ms, &pitchPID[0] );//Pitch Angle PIDs		
-			pitchPIDoutput[1] = PIDUpdate( speedPIDoutput[1], kalmanAngle, timenow - last_PID_ms, &pitchPID[1] );//Pitch Angle PIDs
-}			
+			pitchPIDoutput[1] = PIDUpdate( speedPIDoutput[1], kalmanAngle, timenow - last_PID_ms, &pitchPID[1] );//Pitch Angle PIDs			
+			
 			last_PID_ms = timenow;
 			
 			//Limit PID output to +/-100 to match 100% motor throttle
