@@ -9,17 +9,17 @@
 
 //Speed PID Configuration
 #define PIDS_P_GAIN 0.019f
-#define PIDS_I_GAIN 0.0f
-#define PIDS_D_GAIN 190.0f
-#define PIDS_EMA_SAMPLES 5.0f
-#define PIDS_I_LIMIT  250.0 //Ilimit is before process gain
+#define PIDS_I_GAIN 250.0f
+#define PIDS_D_GAIN 180.0f
+#define PIDS_EMA_SAMPLES 6.0f
+#define PIDS_I_LIMIT  50.0 //Ilimit is before process gain
 
 //Pitch PID Configuration
-#define PIDP_P_GAIN 6.0f
-#define PIDP_I_GAIN 300.0f
-#define PIDP_D_GAIN 27.0f
-#define PIDP_EMA_SAMPLES 1.5f
-#define PIDP_I_LIMIT  10.0 //Ilimit is before process gain
+#define PIDP_P_GAIN 5.7f
+#define PIDP_I_GAIN 250.0f
+#define PIDP_D_GAIN 28.0f
+#define PIDP_EMA_SAMPLES 1.25f
+#define PIDP_I_LIMIT  15.0 //Ilimit is before process gain
 
 typedef struct
 {
