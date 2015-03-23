@@ -28,6 +28,8 @@
 
 //#define DISABLE_MOTORS
 
+#define FILTERED_ANGLE_TRIM -6.0f //Trim to be applied to smoothed complementary filter estimate
+
 static double last_gy_ms;
 static double last_PID_ms;
 double current_milliseconds() 
@@ -353,11 +355,11 @@ continue;
 }
 			
 		/*Complementary filters to smooth rough pitch and roll estimates*/
-		filteredPitch = 0.99 * ( filteredPitch + ( gy * gy_scale ) ) + ( 0.01 * i2cPitch );
+		filteredPitch = 0.998 * ( filteredPitch + ( gy * gy_scale ) ) + ( 0.002 * i2cPitch );
 		filteredRoll = 0.98 * ( filteredRoll + ( gx * gy_scale ) ) + ( 0.02 * i2cRoll );
 
 		/*Kalman filter for most accurate pitch estimates*/	
-		kalmanAngle = -getkalmanangle(filteredPitch, gy, gy_scale /*dt*/);
+		kalmanAngle = -getkalmanangle(filteredPitch+FILTERED_ANGLE_TRIM, gy, gy_scale /*dt*/);
 
 		/* Monitor angles to determine if Eddie has fallen too far... or if Eddie has been returned upright*/
 		if ( ( inRunAwayState || ( fabs( kalmanAngle ) > 50 || fabs( filteredRoll ) > 45 ) ) && !inFalloverState ) 
@@ -370,7 +372,7 @@ continue;
 		} 
 		else if ( fabs( kalmanAngle ) < 10 && inFalloverState && fabs( filteredRoll ) < 20 )
 		{
-			if ( ++inSteadyState == 100 )
+			if ( ++inSteadyState == 200 )
 			{
 				inRunAwayState = 0;
 				inSteadyState = 0;
