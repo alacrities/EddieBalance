@@ -135,13 +135,14 @@ void imuinit()
 	sendi2c( XM_I2C_ADDR, CTRL_REG2_XM, 0x00); //Set scale +/-2g
 	sendi2c( XM_I2C_ADDR, CTRL_REG4_XM, 0x30 );
 	
+
 	sendi2c( XM_I2C_ADDR, CTRL_REG5_XM, 0x94);
 	sendi2c( XM_I2C_ADDR, CTRL_REG6_XM, 0x00);
 	sendi2c( XM_I2C_ADDR, CTRL_REG7_XM, 0x00);
-/*
+
 	return;
 	
-  while(1)
+	// while(1)
 	{
 		readGyro();
 		readAccel();
@@ -150,7 +151,7 @@ void imuinit()
 		printf("gx:%6.2f gy:%6.2f gz:%6.2f  ax:%6.2f ay:%6.2f az:%6.2f  mx:%6.2f my:%6.2f mz:%6.2f  temp:%0.0f\n",gx,gy,gz,ax,ay,az,mx,my,mz,temp);
 		usleep(20000);
 	}
-	*/
+	
 }
 
 
