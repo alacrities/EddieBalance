@@ -43,7 +43,7 @@ enum
 	CONSOLE=0,
 	UDP //Will send all print() calls to UDP port 4243, all printf() will still go to console (:)
 };
-int outputto = console; //Change to fit current need.
+int outputto = CONSOLE; //Change to fit current need.
 
 int Running = 1;
 int inFalloverState = 0; //Used to flag when Eddie has fallen over and disables motors
